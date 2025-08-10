@@ -1,10 +1,8 @@
 package com.example.demo.dto.response;
 
-import com.example.demo.util.Constants;
-
 import java.util.List;
 
-public record SearchResponse(List<Constants.Business> results,
+public record SearchResponse(List<BusinessDocument> results,
                              List<Facet> facets,
                              Pagination pagination,
                              long timeTaken) {

@@ -4,6 +4,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import com.example.demo.dto.request.SearchRequest;
 import com.example.demo.dto.request.SuggestionRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
@@ -43,18 +44,38 @@ public class NativeQueryBuilder {
 
     public static NativeQuery toSearchQuery(SearchRequest parameters) {
         var filterQueries = buildQueries(FILTER_QUERY_RULES, parameters);
-        var mustQueries = buildQueries(MUST_QUERY_RULES, parameters);
-        var shouldQueries = buildQueries(SHOULD_QUERY_RULES, parameters);
-        var boolQuery = BoolQuery.of(builder -> builder.filter(filterQueries)
+        var mustQueries = buildQueries(MUST_QUERY_RULES, parameters).stream()
+                .map(q -> fixBoostDecimalSeparator(q))
+                .toList();
+        var shouldQueries = buildQueries(SHOULD_QUERY_RULES, parameters).stream()
+                .map(q -> fixBoostDecimalSeparator(q))
+                .toList();
+
+        var boolQuery = BoolQuery.of(builder -> builder
+                .filter(filterQueries)
                 .must(mustQueries)
                 .should(shouldQueries));
+
         return NativeQuery.builder()
                 .withQuery(Query.of(builder -> builder.bool(boolQuery)))
-                .withAggregation(Constants.Business.OFFERINGS_AGGREGATE_NAME, ElasticsearchUtil.buildTermsAggregation(Constants.Business.OFFERINGS_RAW))
+                .withAggregation(Constants.Business.OFFERINGS_AGGREGATE_NAME,
+                        ElasticsearchUtil.buildTermsAggregation(Constants.Business.OFFERINGS_RAW))
                 .withPageable(PageRequest.of(parameters.page(), parameters.size()))
                 .withTrackTotalHits(true)
                 .build();
     }
+
+    // boost değerlerinde virgülü noktaya çevirir
+    private static Query fixBoostDecimalSeparator(Query query) {
+        try {
+            String json = new ObjectMapper().writeValueAsString(query);
+            json = json.replaceAll("(\\^\\d+),(\\d+)", "$1.$2");
+            return new ObjectMapper().readValue(json, Query.class);
+        } catch (Exception e) {
+            return query;
+        }
+    }
+
 
     private static List<Query> buildQueries(List<QueryRule> queryRules, SearchRequest parameters) {
         return queryRules.stream()

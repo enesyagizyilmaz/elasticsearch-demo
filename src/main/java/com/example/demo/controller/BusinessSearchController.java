@@ -22,12 +22,12 @@ public class BusinessSearchController {
         this.suggestionService = suggestionService;
     }
 
-    @GetMapping("/api/suggestions")
+    @GetMapping("/suggestions")
     public List<String> suggest(SuggestionRequest parameters){
         return this.suggestionService.fetchSuggestions(parameters);
     }
 
-    @GetMapping("/api/search")
+    @GetMapping("/search")
     public SearchResponse search(SearchRequest parameters){
         return this.searchService.search(parameters);
     }

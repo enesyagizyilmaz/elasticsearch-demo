@@ -2,6 +2,7 @@ package com.example.demo.util;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import static com.example.demo.util.Constants.Business.*;
@@ -48,7 +49,7 @@ public class QueryRules {
             srp -> buildMultiMatchQuery(SEARCH_BOOST_FIELDS, srp.query())
     );
 
-    private static String boostField(String field, float boost){
-        return BOOST_FIELD_FORMAT.formatted(field, boost);
+    private static String boostField(String field, float boost) {
+        return String.format(Locale.US, BOOST_FIELD_FORMAT, field, boost);
     }
 }

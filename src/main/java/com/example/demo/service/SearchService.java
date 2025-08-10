@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import co.elastic.clients.elasticsearch._types.aggregations.StringTermsAggregate;
+import com.example.demo.dto.response.BusinessDocument;
 import com.example.demo.dto.request.SearchRequest;
 import com.example.demo.dto.response.Facet;
 import com.example.demo.dto.response.FacetItem;
@@ -37,11 +38,11 @@ public class SearchService {
         log.info("search request: {}", parameters);
         var query = NativeQueryBuilder.toSearchQuery(parameters);
         log.info("bool query: {}", query.getQuery());
-        var searchHits = this.elasticsearchOperations.search(query, Constants.Business.class, Constants.Index.BUSINESS);
+        var searchHits = this.elasticsearchOperations.search(query, BusinessDocument.class, Constants.Index.BUSINESS);
         return buildResponse(parameters, searchHits);
     }
 
-    private SearchResponse buildResponse(SearchRequest parameters, SearchHits<Constants.Business> searchHits) {
+    private SearchResponse buildResponse(SearchRequest parameters, SearchHits<BusinessDocument> searchHits) {
         var results = searchHits.getSearchHits()
                 .stream()
                 .map(SearchHit::getContent)
