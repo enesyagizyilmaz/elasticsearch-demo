@@ -2,8 +2,8 @@ package com.example.demo.util;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import com.example.demo.dto.request.SearchRequest;
-import com.example.demo.dto.request.SuggestionRequest;
+import com.example.demo.dto.request.SearchDTO;
+import com.example.demo.dto.request.SuggestionDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
@@ -28,12 +28,12 @@ public class NativeQueryBuilder {
             QueryRules.CATEGORY_QUERY
     );
 
-    public static NativeQuery toSuggestQuery(SuggestionRequest suggestionRequest) {
+    public static NativeQuery toSuggestQuery(SuggestionDTO suggestionRequest) {
         var suggester = ElasticsearchUtil.buildCompletionSuggester(
                 Constants.Suggestion.SUGGEST_NAME,
                 Constants.Suggestion.SEARCH_TERM,
-                suggestionRequest.prefix(),
-                suggestionRequest.limit()
+                suggestionRequest.getPrefix(),
+                suggestionRequest.getLimit()
         );
         return NativeQuery.builder()
                 .withSuggester(suggester)
@@ -42,7 +42,7 @@ public class NativeQueryBuilder {
                 .build();
     }
 
-    public static NativeQuery toSearchQuery(SearchRequest parameters) {
+    public static NativeQuery toSearchQuery(SearchDTO parameters) {
         var filterQueries = buildQueries(FILTER_QUERY_RULES, parameters);
         var mustQueries = buildQueries(MUST_QUERY_RULES, parameters).stream()
                 .map(q -> fixBoostDecimalSeparator(q))
@@ -60,7 +60,7 @@ public class NativeQueryBuilder {
                 .withQuery(Query.of(builder -> builder.bool(boolQuery)))
                 .withAggregation(Constants.Business.OFFERINGS_AGGREGATE_NAME,
                         ElasticsearchUtil.buildTermsAggregation(Constants.Business.OFFERINGS_RAW))
-                .withPageable(PageRequest.of(parameters.page(), parameters.size()))
+                .withPageable(PageRequest.of(parameters.getPage(), parameters.getSize()))
                 .withTrackTotalHits(true)
                 .build();
     }
@@ -77,7 +77,7 @@ public class NativeQueryBuilder {
     }
 
 
-    private static List<Query> buildQueries(List<QueryRule> queryRules, SearchRequest parameters) {
+    private static List<Query> buildQueries(List<QueryRule> queryRules, SearchDTO parameters) {
         return queryRules.stream()
                 .map(qr -> qr.build(parameters))
                 .flatMap(Optional::stream)

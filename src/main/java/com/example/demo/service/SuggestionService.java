@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.SuggestionRequest;
+import com.example.demo.dto.request.SuggestionDTO;
 import com.example.demo.util.Constants;
 import com.example.demo.util.NativeQueryBuilder;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class SuggestionService {
         this.elasticsearchOperations = elasticsearchOperations;
     }
 
-    public List<String> fetchSuggestions(SuggestionRequest parameters) {
+    public List<String> fetchSuggestions(SuggestionDTO parameters) {
         log.info("suggestion request: {}", parameters);
         var query = NativeQueryBuilder.toSuggestQuery(parameters);
         var searchHits = this.elasticsearchOperations.search(query, Object.class, Constants.Index.SUGGESTION);

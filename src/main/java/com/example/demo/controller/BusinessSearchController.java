@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.request.SearchRequest;
-import com.example.demo.dto.request.SuggestionRequest;
-import com.example.demo.dto.response.SearchResponse;
+import com.example.demo.dto.request.SearchDTO;
+import com.example.demo.dto.request.SuggestionDTO;
+import com.example.demo.dto.response.SearchResponseDTO;
 import com.example.demo.service.SearchService;
 import com.example.demo.service.SuggestionService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +23,12 @@ public class BusinessSearchController {
     }
 
     @GetMapping("/suggestions")
-    public List<String> suggest(SuggestionRequest parameters){
+    public List<String> suggest(SuggestionDTO parameters){
         return this.suggestionService.fetchSuggestions(parameters);
     }
 
     @GetMapping("/search")
-    public SearchResponse search(SearchRequest parameters){
+    public SearchResponseDTO search(SearchDTO parameters){
         return this.searchService.search(parameters);
     }
 }

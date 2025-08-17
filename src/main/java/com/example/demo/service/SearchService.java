@@ -1,12 +1,8 @@
 package com.example.demo.service;
 
 import co.elastic.clients.elasticsearch._types.aggregations.StringTermsAggregate;
-import com.example.demo.dto.response.BusinessDocument;
-import com.example.demo.dto.request.SearchRequest;
-import com.example.demo.dto.response.Facet;
-import com.example.demo.dto.response.FacetItem;
-import com.example.demo.dto.response.Pagination;
-import com.example.demo.dto.response.SearchResponse;
+import com.example.demo.dto.request.SearchDTO;
+import com.example.demo.dto.response.*;
 import com.example.demo.util.Constants;
 import com.example.demo.util.NativeQueryBuilder;
 import org.slf4j.LoggerFactory;
@@ -34,7 +30,7 @@ public class SearchService {
         this.elasticsearchOperations = elasticsearchOperations;
     }
 
-    public SearchResponse search(SearchRequest parameters) {
+    public SearchResponseDTO search(SearchDTO parameters) {
         log.info("search request: {}", parameters);
         var query = NativeQueryBuilder.toSearchQuery(parameters);
         log.info("bool query: {}", query.getQuery());
@@ -42,20 +38,20 @@ public class SearchService {
         return buildResponse(parameters, searchHits);
     }
 
-    private SearchResponse buildResponse(SearchRequest parameters, SearchHits<BusinessDocument> searchHits) {
+    private SearchResponseDTO buildResponse(SearchDTO parameters, SearchHits<BusinessDocument> searchHits) {
         var results = searchHits.getSearchHits()
                 .stream()
                 .map(SearchHit::getContent)
                 .toList();
-        var searchPage = SearchHitSupport.searchPageFor(searchHits, PageRequest.of(parameters.page(), parameters.size()));
-        var pagination = new Pagination(
+        var searchPage = SearchHitSupport.searchPageFor(searchHits, PageRequest.of(parameters.getPage(), parameters.getSize()));
+        var pagination = new PaginationDTO(
                 searchPage.getNumber(),
                 searchPage.getNumberOfElements(),
                 searchPage.getTotalElements(),
                 searchPage.getTotalPages()
         );
         var facets = buildFacets((List<ElasticsearchAggregation>) searchHits.getAggregations().aggregations());
-        return new SearchResponse(
+        return new SearchResponseDTO(
                 results,
                 facets,
                 pagination,
@@ -63,7 +59,7 @@ public class SearchService {
         );
     }
 
-    private List<Facet> buildFacets(List<ElasticsearchAggregation> aggregations) {
+    private List<FacetDTO> buildFacets(List<ElasticsearchAggregation> aggregations) {
         var map = aggregations.stream()
                 .map(ElasticsearchAggregation::aggregation)
                 .collect(Collectors.toMap(
@@ -75,13 +71,13 @@ public class SearchService {
         );
     }
 
-    private Facet buildFacet(String name, StringTermsAggregate stringTermsAggregate) {
+    private FacetDTO buildFacet(String name, StringTermsAggregate stringTermsAggregate) {
         var facetItems = stringTermsAggregate.buckets()
                 .array()
                 .stream()
-                .map(b -> new FacetItem(b.key().stringValue(), b.docCount()))
+                .map(b -> new FacetItemDTO(b.key().stringValue(), b.docCount()))
                 .toList();
-        return new Facet(name, facetItems);
+        return new FacetDTO(name, facetItems);
     }
 
 }

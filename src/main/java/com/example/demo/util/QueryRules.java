@@ -12,28 +12,28 @@ public class QueryRules {
     private static final String BOOST_FIELD_FORMAT = "%s^%f";
 
     public static final QueryRule STATE_QUERY = QueryRule.of(
-            srp -> Objects.nonNull(srp.state()),
-            srp -> buildTermQuery(STATE, srp.state(), 1.0f)
+            srp -> Objects.nonNull(srp.getState()),
+            srp -> buildTermQuery(STATE, srp.getState(), 1.0f)
     );
 
     public static final QueryRule OFFERINGS_QUERY = QueryRule.of(
-            srp -> Objects.nonNull(srp.offerings()),
-            srp -> buildTermQuery(OFFERINGS_RAW, srp.offerings(), 1.0f)
+            srp -> Objects.nonNull(srp.getOfferings()),
+            srp -> buildTermQuery(OFFERINGS_RAW, srp.getOfferings(), 1.0f)
     );
 
     public static final QueryRule RATING_QUERY = QueryRule.of(
-            srp -> Objects.nonNull(srp.rating()),
-            srp -> buildRangeQuery(RATING, builder -> builder.gte(srp.rating()))
+            srp -> Objects.nonNull(srp.getRating()),
+            srp -> buildRangeQuery(RATING, builder -> builder.gte(srp.getRating()))
     );
 
     public static final QueryRule DISTANCE_QUERY = QueryRule.of(
-            srp -> Stream.of(srp.distance(), srp.longitude(), srp.latitude()).allMatch(Objects::nonNull),
-            srp -> buildGeoDistanceQuery(LOCATION, srp.distance(), srp.latitude(), srp.longitude())
+            srp -> Stream.of(srp.getDistance(), srp.getLongitude(), srp.getLatitude()).allMatch(Objects::nonNull),
+            srp -> buildGeoDistanceQuery(LOCATION, srp.getDistance(), srp.getLatitude(), srp.getLongitude())
     );
 
     public static final QueryRule CATEGORY_QUERY = QueryRule.of(
-            srp -> Objects.nonNull(srp.query()),  // can also use Predicates.isTrue() if it is true always
-            srp -> buildTermQuery(CATEGORY_RAW, srp.query(), 5.0f)
+            srp -> Objects.nonNull(srp.getQuery()),  // can also use Predicates.isTrue() if it is true always
+            srp -> buildTermQuery(CATEGORY_RAW, srp.getQuery(), 5.0f)
     );
 
     private static final List<String> SEARCH_BOOST_FIELDS = List.of(
@@ -45,8 +45,8 @@ public class QueryRules {
     );
 
     public static final QueryRule SEARCH_QUERY = QueryRule.of(
-            srp -> Objects.nonNull(srp.query()),  // can also use Predicates.isTrue() if it is true always
-            srp -> buildMultiMatchQuery(SEARCH_BOOST_FIELDS, srp.query())
+            srp -> Objects.nonNull(srp.getQuery()),  // can also use Predicates.isTrue() if it is true always
+            srp -> buildMultiMatchQuery(SEARCH_BOOST_FIELDS, srp.getQuery())
     );
 
     private static String boostField(String field, float boost) {
