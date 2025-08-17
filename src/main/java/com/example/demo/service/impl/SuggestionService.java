@@ -1,6 +1,7 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.dto.request.SuggestionDTO;
+import com.example.demo.service.ISuggestionService;
 import com.example.demo.util.Constants;
 import com.example.demo.util.NativeQueryBuilder;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class SuggestionService {
+public class SuggestionService implements ISuggestionService {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(SuggestionService.class);
 
     private final ElasticsearchOperations elasticsearchOperations;

@@ -1,8 +1,9 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import co.elastic.clients.elasticsearch._types.aggregations.StringTermsAggregate;
 import com.example.demo.dto.request.SearchDTO;
 import com.example.demo.dto.response.*;
+import com.example.demo.service.ISearchService;
 import com.example.demo.util.Constants;
 import com.example.demo.util.NativeQueryBuilder;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 import static com.example.demo.util.Constants.Business.OFFERINGS_AGGREGATE_NAME;
 
 @Service
-public class SearchService {
+public class SearchService implements ISearchService {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(SearchService.class);
 
@@ -38,7 +39,7 @@ public class SearchService {
         return buildResponse(parameters, searchHits);
     }
 
-    private SearchResponseDTO buildResponse(SearchDTO parameters, SearchHits<BusinessDocument> searchHits) {
+    public SearchResponseDTO buildResponse(SearchDTO parameters, SearchHits<BusinessDocument> searchHits) {
         var results = searchHits.getSearchHits()
                 .stream()
                 .map(SearchHit::getContent)
@@ -59,7 +60,7 @@ public class SearchService {
         );
     }
 
-    private List<FacetDTO> buildFacets(List<ElasticsearchAggregation> aggregations) {
+    public List<FacetDTO> buildFacets(List<ElasticsearchAggregation> aggregations) {
         var map = aggregations.stream()
                 .map(ElasticsearchAggregation::aggregation)
                 .collect(Collectors.toMap(
@@ -71,7 +72,7 @@ public class SearchService {
         );
     }
 
-    private FacetDTO buildFacet(String name, StringTermsAggregate stringTermsAggregate) {
+    public FacetDTO buildFacet(String name, StringTermsAggregate stringTermsAggregate) {
         var facetItems = stringTermsAggregate.buckets()
                 .array()
                 .stream()
