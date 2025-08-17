@@ -24,11 +24,11 @@ public class BusinessSearchController {
 
     @GetMapping("/suggestions")
     public List<String> suggest(SuggestionDTO parameters){
-        return this.suggestionService.fetchSuggestions(parameters);
+        return suggestionService.fetchSuggestions(parameters);
     }
 
     @GetMapping("/search")
     public SearchResponseDTO search(SearchDTO parameters){
-        return this.searchService.search(parameters);
+        return searchService.search(parameters);
     }
 }
