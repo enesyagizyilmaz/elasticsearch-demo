@@ -32,6 +32,11 @@ public class SearchService implements ISearchService {
         this.elasticsearchOperations = elasticsearchOperations;
     }
 
+    /**
+     *
+     * @param parameters
+     * @return SearchResponseDTO
+     */
     public SearchResponseDTO search(SearchDTO parameters) {
         log.info("search request: {}", parameters);
         NativeQuery query = NativeQueryBuilder.toSearchQuery(parameters);
@@ -40,6 +45,12 @@ public class SearchService implements ISearchService {
         return buildResponse(parameters, searchHits);
     }
 
+    /**
+     *
+     * @param parameters
+     * @param searchHits
+     * @return SearchResponseDTO
+     */
     public SearchResponseDTO buildResponse(SearchDTO parameters, SearchHits<BusinessDocument> searchHits) {
         List<BusinessDocument> results = searchHits.getSearchHits()
                 .stream()
@@ -59,6 +70,11 @@ public class SearchService implements ISearchService {
                 searchHits.getExecutionDuration().toMillis());
     }
 
+    /**
+     *
+     * @param aggregations
+     * @return List<FacetDTO>
+     */
     public List<FacetDTO> buildFacets(List<ElasticsearchAggregation> aggregations) {
         Map<String, Aggregate> map = aggregations.stream()
                 .map(ElasticsearchAggregation::aggregation)
@@ -70,6 +86,12 @@ public class SearchService implements ISearchService {
         );
     }
 
+    /**
+     *
+     * @param name
+     * @param stringTermsAggregate
+     * @return FacetDTO
+     */
     public FacetDTO buildFacet(String name, StringTermsAggregate stringTermsAggregate) {
         List<FacetItemDTO> facetItems = stringTermsAggregate.buckets()
                 .array()

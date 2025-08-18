@@ -41,7 +41,7 @@ public class QueryRules {
             boostField(CATEGORY, 1.5f),
             boostField(OFFERINGS, 1.5f),
             boostField(ADDRESS, 1.2f),
-            DESCRIPTION
+            boostField(DESCRIPTION, 0.5f)
     );
 
     public static final QueryRule SEARCH_QUERY = QueryRule.of(

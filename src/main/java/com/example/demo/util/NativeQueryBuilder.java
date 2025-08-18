@@ -45,10 +45,10 @@ public class NativeQueryBuilder {
     public static NativeQuery toSearchQuery(SearchDTO parameters) {
         var filterQueries = buildQueries(FILTER_QUERY_RULES, parameters);
         var mustQueries = buildQueries(MUST_QUERY_RULES, parameters).stream()
-                .map(q -> fixBoostDecimalSeparator(q))
+                .map(NativeQueryBuilder::fixBoostDecimalSeparator)
                 .toList();
         var shouldQueries = buildQueries(SHOULD_QUERY_RULES, parameters).stream()
-                .map(q -> fixBoostDecimalSeparator(q))
+                .map(NativeQueryBuilder::fixBoostDecimalSeparator)
                 .toList();
 
         var boolQuery = BoolQuery.of(builder -> builder
@@ -65,7 +65,6 @@ public class NativeQueryBuilder {
                 .build();
     }
 
-    // boost değerlerinde virgülü noktaya çevirir
     private static Query fixBoostDecimalSeparator(Query query) {
         try {
             String json = new ObjectMapper().writeValueAsString(query);
