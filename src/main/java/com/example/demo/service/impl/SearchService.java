@@ -41,7 +41,7 @@ public class SearchService implements ISearchService {
         log.info("search request: {}", parameters);
         NativeQuery query = NativeQueryBuilder.toSearchQuery(parameters);
         log.info("bool query: {}", query.getQuery());
-        SearchHits<BusinessDocument> searchHits = this.elasticsearchOperations.search(query, BusinessDocument.class, Constants.Index.BUSINESS);
+        SearchHits<BusinessDocument> searchHits = elasticsearchOperations.search(query, BusinessDocument.class, Constants.Index.BUSINESS);
         return buildResponse(parameters, searchHits);
     }
 

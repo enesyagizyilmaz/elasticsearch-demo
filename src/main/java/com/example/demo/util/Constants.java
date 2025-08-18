@@ -17,7 +17,7 @@ public class Constants {
     }
 
     public static class Fuzzy {
-        public static final String LEVEL = "1";
+        public static final String LEVEL = "2";
         public static final Integer PREFIX_LENGTH = 2;
     }
 

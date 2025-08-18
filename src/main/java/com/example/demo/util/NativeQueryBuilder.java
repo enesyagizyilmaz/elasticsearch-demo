@@ -50,12 +50,10 @@ public class NativeQueryBuilder {
         var shouldQueries = buildQueries(SHOULD_QUERY_RULES, parameters).stream()
                 .map(NativeQueryBuilder::fixBoostDecimalSeparator)
                 .toList();
-
         var boolQuery = BoolQuery.of(builder -> builder
                 .filter(filterQueries)
                 .must(mustQueries)
                 .should(shouldQueries));
-
         return NativeQuery.builder()
                 .withQuery(Query.of(builder -> builder.bool(boolQuery)))
                 .withAggregation(Constants.Business.OFFERINGS_AGGREGATE_NAME,

@@ -32,7 +32,7 @@ public class QueryRules {
     );
 
     public static final QueryRule CATEGORY_QUERY = QueryRule.of(
-            srp -> Objects.nonNull(srp.getQuery()),  // can also use Predicates.isTrue() if it is true always
+            srp -> Objects.nonNull(srp.getQuery()),
             srp -> buildTermQuery(CATEGORY_RAW, srp.getQuery(), 5.0f)
     );
 
@@ -45,7 +45,7 @@ public class QueryRules {
     );
 
     public static final QueryRule SEARCH_QUERY = QueryRule.of(
-            srp -> Objects.nonNull(srp.getQuery()),  // can also use Predicates.isTrue() if it is true always
+            srp -> Objects.nonNull(srp.getQuery()),
             srp -> buildMultiMatchQuery(SEARCH_BOOST_FIELDS, srp.getQuery())
     );
 
